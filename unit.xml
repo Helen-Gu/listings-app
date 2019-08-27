@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="Mocha Tests" time="0.276" tests="20" failures="0">
+  <testsuite name="Root Suite" timestamp="2019-08-27T23:33:43" tests="0" failures="0" time="0">
+  </testsuite>
+  <testsuite name="FavoriteListings" timestamp="2019-08-27T23:33:43" tests="0" file="/Users/markutley/Development/etsy-challenge/favorite-listings-cjhom8e5b3g/test/FavoriteListings.js" failures="0" time="0">
+  </testsuite>
+  <testsuite name="isListingFavorited" timestamp="2019-08-27T23:33:43" tests="2" file="/Users/markutley/Development/etsy-challenge/favorite-listings-cjhom8e5b3g/test/FavoriteListings.js" failures="0" time="0.002">
+    <testcase name="FavoriteListings isListingFavorited returns false when the listing is not favorited" time="0.001" classname="returns false when the listing is not favorited">
+    </testcase>
+    <testcase name="FavoriteListings isListingFavorited returns true when the listing is favorited" time="0.001" classname="returns true when the listing is favorited">
+    </testcase>
+  </testsuite>
+  <testsuite name="addListing" timestamp="2019-08-27T23:33:43" tests="2" file="/Users/markutley/Development/etsy-challenge/favorite-listings-cjhom8e5b3g/test/FavoriteListings.js" failures="0" time="0.001">
+    <testcase name="FavoriteListings addListing adds a listing to favorites" time="0" classname="adds a listing to favorites">
+    </testcase>
+    <testcase name="FavoriteListings addListing only adds a listing to favorites once" time="0.001" classname="only adds a listing to favorites once">
+    </testcase>
+  </testsuite>
+  <testsuite name="removeListing" timestamp="2019-08-27T23:33:43" tests="1" file="/Users/markutley/Development/etsy-challenge/favorite-listings-cjhom8e5b3g/test/FavoriteListings.js" failures="0" time="0">
+    <testcase name="FavoriteListings removeListing removes a listing from favorites" time="0" classname="removes a listing from favorites">
+    </testcase>
+  </testsuite>
+  <testsuite name="getFavorites" timestamp="2019-08-27T23:33:43" tests="1" file="/Users/markutley/Development/etsy-challenge/favorite-listings-cjhom8e5b3g/test/FavoriteListings.js" failures="0" time="0.002">
+    <testcase name="FavoriteListings getFavorites returns favorited listings" time="0.002" classname="returns favorited listings">
+    </testcase>
+  </testsuite>
+  <testsuite name="Listing" timestamp="2019-08-27T23:33:43" tests="0" file="/Users/markutley/Development/etsy-challenge/favorite-listings-cjhom8e5b3g/test/Listing.js" failures="0" time="0">
+  </testsuite>
+  <testsuite name="#fromJSON" timestamp="2019-08-27T23:33:43" tests="1" file="/Users/markutley/Development/etsy-challenge/favorite-listings-cjhom8e5b3g/test/Listing.js" failures="0" time="0">
+    <testcase name="Listing #fromJSON should create a listing object from JSON returned from the Etsy API" time="0" classname="should create a listing object from JSON returned from the Etsy API">
+    </testcase>
+  </testsuite>
+  <testsuite name="formatPrice" timestamp="2019-08-27T23:33:43" tests="2" file="/Users/markutley/Development/etsy-challenge/favorite-listings-cjhom8e5b3g/test/Listing.js" failures="0" time="0">
+    <testcase name="Listing formatPrice should format USD price correctly" time="0" classname="should format USD price correctly">
+    </testcase>
+    <testcase name="Listing formatPrice should format GBP price correctly" time="0" classname="should format GBP price correctly">
+    </testcase>
+  </testsuite>
+  <testsuite name="setIsFavorite" timestamp="2019-08-27T23:33:43" tests="1" file="/Users/markutley/Development/etsy-challenge/favorite-listings-cjhom8e5b3g/test/Listing.js" failures="0" time="0.001">
+    <testcase name="Listing setIsFavorite should set the listing to be a favorite" time="0.001" classname="should set the listing to be a favorite">
+    </testcase>
+  </testsuite>
+  <testsuite name="app" timestamp="2019-08-27T23:33:43" tests="0" file="/Users/markutley/Development/etsy-challenge/favorite-listings-cjhom8e5b3g/test/app.js" failures="0" time="0">
+  </testsuite>
+  <testsuite name="Trending listings page" timestamp="2019-08-27T23:33:43" tests="3" file="/Users/markutley/Development/etsy-challenge/favorite-listings-cjhom8e5b3g/test/app.js" failures="0" time="0.194">
+    <testcase name="app Trending listings page it should load the trending listings page" time="0.092" classname="it should load the trending listings page">
+    </testcase>
+    <testcase name="app Trending listings page it should render a listing card correctly" time="0.04" classname="it should render a listing card correctly">
+    </testcase>
+    <testcase name="app Trending listings page it should switch between pages of trending lisitngs" time="0.062" classname="it should switch between pages of trending lisitngs">
+    </testcase>
+  </testsuite>
+  <testsuite name="Favoriting listings" timestamp="2019-08-27T23:33:43" tests="3" file="/Users/markutley/Development/etsy-challenge/favorite-listings-cjhom8e5b3g/test/app.js" failures="0" time="0.048">
+    <testcase name="app Favoriting listings it favorites a listing" time="0.016" classname="it favorites a listing">
+    </testcase>
+    <testcase name="app Favoriting listings does not favorite a listing more than once" time="0.008" classname="does not favorite a listing more than once">
+    </testcase>
+    <testcase name="app Favoriting listings loads trending listings after favoriting and displays the listing as favorited" time="0.024" classname="loads trending listings after favoriting and displays the listing as favorited">
+    </testcase>
+  </testsuite>
+  <testsuite name="Favorite listing page" timestamp="2019-08-27T23:33:43" tests="3" file="/Users/markutley/Development/etsy-challenge/favorite-listings-cjhom8e5b3g/test/app.js" failures="0" time="0.025">
+    <testcase name="app Favorite listing page it displays the favorite listing page" time="0.007" classname="it displays the favorite listing page">
+    </testcase>
+    <testcase name="app Favorite listing page it shows all listings on the favorite listings page as favorited" time="0.009" classname="it shows all listings on the favorite listings page as favorited">
+    </testcase>
+    <testcase name="app Favorite listing page orders listings by the number of favoriters" time="0.009" classname="orders listings by the number of favoriters">
+    </testcase>
+  </testsuite>
+  <testsuite name="Un-favoriting listings" timestamp="2019-08-27T23:33:43" tests="1" file="/Users/markutley/Development/etsy-challenge/favorite-listings-cjhom8e5b3g/test/app.js" failures="0" time="0.003">
+    <testcase name="app Un-favoriting listings it unfavorites a listing" time="0.003" classname="it unfavorites a listing">
+    </testcase>
+  </testsuite>
+</testsuites>
