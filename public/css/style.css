@@ -1,0 +1,58 @@
+body {
+  font: 14px "Roboto", "Droid Sans", "Segoe UI", "Helvetica", Arial, sans-serif;
+}
+
+#nav {
+  border-bottom: 1px solid lightgray;
+}
+
+.listing-card {
+	position:relative;
+}
+
+.listing-card .listing-title {
+  -webkit-line-clamp: 2;
+}
+
+.listing-card .card-image img {
+  border-radius: 2px;
+  transition: box-shadow 0.2s ease-in-out;
+}
+
+.listing-card:hover .card-image img {
+  box-shadow: 0 0 8px 0 rgba(0, 0, 0, 0.2);
+}
+
+.listing-card .listing-price {
+  color: forestgreen;
+}
+
+.listing-card .listing-favorite-icon-wrap {
+	position: absolute;
+	top: 0px;
+	right: 0px;
+	width: 48px;
+	height: 48px;
+	padding: 10px;
+	z-index: 2;
+}
+
+.listing-card .listing-favorite-icon{
+	background: white;
+  cursor: pointer;
+  color: gray;
+  width: 28px;
+	height: 28px;
+	border-radius: 14px;
+  padding-top: 1px;
+}
+
+.listing-card .listing-favorite-icon:hover {
+	color: lightgray;
+}
+
+.listing-card .listing-favorite-icon.is-favorite {
+	color: crimson;
+}
+    
+    

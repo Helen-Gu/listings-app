@@ -1,0 +1,12 @@
+<% layout('layout') -%>
+
+<div class="columns is-multiline is-mobile">
+  <% listings.forEach(function(listing) { %>
+  	<div class="column is-one-quarter">
+  		<%- partial('listing_card', {listing: listing}) %>
+  	</div>
+  <% }) %>
+</div>
+
+<%- partial('pagination', {pages: pages, current_page: current_page}) %>
+

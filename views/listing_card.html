@@ -1,0 +1,33 @@
+<div class="listing-card">
+  <div class="listing-favorite-icon-wrap">
+    <div 
+      class="icon listing-favorite-icon <%= listing.is_favorite ? 'is-favorite' : '' %>"
+      data-listing-id="<%= listing.listing_id %>"
+      >
+      <i class="fas fa-heart"></i>
+    </div>
+  </div>
+  <div class="card-image">
+    <figure class="image">
+      <img src="<%= listing.image %>" alt="<%= listing.title %>"/>
+    </figure>
+  </div>
+  <div class="">
+    <br>
+    <p class="listing-price">
+      <%= listing.formatPrice() %>
+    </p>
+    <br>
+    <p>
+      <b class="shop-name"><%= listing.shop_name %></b>
+    </p>
+    <p class="listing-title" title="<%= listing.title %>">
+      <%= listing.title %>
+    </p>
+    <br>
+    <p class="listing-favorers is-size-7 has-text-grey-darker">
+      Favorited by <%= listing.num_favorers %> viewers
+    </p>
+    <br>
+  </div>
+</div>
