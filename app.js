@@ -40,19 +40,18 @@ app.get("/", function(req, res, next) {
 			);
 
 			// Create listing objects from the raw json
-			listings = listings
-				.map(json => {
-					var listing = Listing.fromJSON(json);
-					if (
-						app.favoriteListings
-							.getFavorites()
-							.some(favorite => favorite.listing_id === listing.listing_id)
-					) {
-						listing.setIsFavorite(true);
-					}
-					return listing;
-				})
-				.sort((a, b) => b.num_favorers - a.num_favorers);
+			listings = listings.map(json => {
+				var listing = Listing.fromJSON(json);
+				var listingIsFavorite = app.favoriteListings
+					.getFavorites()
+					.some(favorite => favorite.listing_id === listing.listing_id);
+
+				if (listingIsFavorite) {
+					listing.setIsFavorite(true);
+				}
+
+				return listing;
+			});
 
 			// render the trending listings page with pagination
 			res.render("index", {
@@ -71,9 +70,7 @@ app.get("/", function(req, res, next) {
 
 /* GET the trending listings page. */
 app.get("/favorites", function(req, res, next) {
-	var listings = app.favoriteListings
-		.getFavorites()
-		.sort((a, b) => b.num_favorers - a.num_favorers);
+	var listings = app.favoriteListings.getSortedFavorites();
 
 	for (var i = 0; i < listings.length; i++) {
 		listings[0].setIsFavorite(true);
@@ -94,6 +91,7 @@ app.post("/favorite-listing", function(req, res, next) {
 		.then(function(response) {
 			var results = JSON.parse(response);
 			var listing = Listing.fromJSON(results.results[0]);
+
 			listing.setIsFavorite(true);
 			app.favoriteListings.addListing(listing);
 			res.json({ status: "success" });
@@ -112,8 +110,10 @@ app.delete("/favorite-listing", function(req, res, next) {
 	EtsyAPI.getInstance()
 		.getListing(listing_id)
 		.then(function(response) {
-			// TODO: remove the listing
-			var listing = Listing.fromJSON(JSON.parse(response).results[0]);
+			var results = JSON.parse(response);
+			var listing = Listing.fromJSON(results.results[0]);
+
+			listing.setIsFavorite(false);
 			app.favoriteListings.removeListing(listing);
 			res.json({ status: "success" });
 		})
