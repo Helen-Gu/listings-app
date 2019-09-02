@@ -1,0 +1,11 @@
+<% layout('layout') -%>
+
+<div class="columns is-multiline is-mobile">
+	<% if (listings.length == 0) { %>
+	<div>No recommended listings yet!</div>
+	<% } %> <% listings.forEach(function(listing) { %>
+	<div class="column is-one-quarter">
+		<%- partial('listing_card', {listing: listing}) %>
+	</div>
+	<% }) %>
+</div>

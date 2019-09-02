@@ -33,7 +33,6 @@ app.get("/", function(req, res, next) {
 		.then(function(response) {
 			// if the request succedes parse the response
 			var results = JSON.parse(response);
-
 			// filter to only active listings as inactive have no images and cannot be displayed
 			var listings = results.results.filter(
 				listing => listing.state === "active"
@@ -53,6 +52,8 @@ app.get("/", function(req, res, next) {
 					return listing;
 				})
 				.sort((a, b) => b.num_favorers - a.num_favorers);
+
+			console.dir(listings[0]);
 
 			// render the trending listings page with pagination
 			res.render("index", {
@@ -85,6 +86,22 @@ app.get("/favorites", function(req, res, next) {
 	});
 });
 
+/* GET the recommended listings page. */
+app.get("/recommended", function(req, res, next) {
+	var listings = app.favoriteListings
+		.getFavorites()
+		.sort((a, b) => b.num_favorers - a.num_favorers);
+
+	for (var i = 0; i < listings.length; i++) {
+		listings[0].setIsFavorite(true);
+	}
+
+	res.render("recommended", {
+		is_recommended_listings_page: true,
+		listings: listings,
+	});
+});
+
 /* POST a new listing into favorites */
 app.post("/favorite-listing", function(req, res, next) {
 	var listing_id = req.body.listing_id;
@@ -112,8 +129,8 @@ app.delete("/favorite-listing", function(req, res, next) {
 	EtsyAPI.getInstance()
 		.getListing(listing_id)
 		.then(function(response) {
-			// TODO: remove the listing
-			var listing = Listing.fromJSON(JSON.parse(response).results[0]);
+			var results = JSON.parse(response);
+			var listing = Listing.fromJSON(results.results[0]);
 			app.favoriteListings.removeListing(listing);
 			res.json({ status: "success" });
 		})
