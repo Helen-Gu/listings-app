@@ -31,7 +31,10 @@ function Listing(
 	image,
 	price,
 	currency,
-	num_favorers
+	num_favorers,
+	tags,
+	category_id,
+	taxonomy
 ) {
 	this.listing_id = listing_id;
 	this.title = title;
@@ -41,6 +44,9 @@ function Listing(
 	this.shop_name = shop_name;
 	this.num_favorers = num_favorers;
 	this.is_favorite = false;
+	this.tags = tags;
+	this.category_id = category_id;
+	this.taxonomy = taxonomy;
 }
 
 Listing.fromJSON = function(json) {
@@ -51,7 +57,10 @@ Listing.fromJSON = function(json) {
 		json.Images[0].url_170x135,
 		parseFloat(json.price),
 		json.currency_code,
-		json.num_favorers
+		json.num_favorers,
+		json.tags,
+		json.category_id,
+		json.taxonomy_path[0]
 	);
 };
 

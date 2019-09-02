@@ -5,6 +5,7 @@ var bodyParser = require("body-parser");
 var EtsyAPI = require("./src/EtsyAPI");
 var Listing = require("./src/Listing");
 var FavoriteListings = require("./src/FavoriteListings");
+var RecommendedListings = require("./src/RecommendedListings");
 
 var app = express();
 
@@ -33,18 +34,19 @@ app.get("/", function(req, res, next) {
 		.then(function(response) {
 			// if the request succedes parse the response
 			var results = JSON.parse(response);
-
 			// filter to only active listings as inactive have no images and cannot be displayed
 			var listings = results.results.filter(
 				listing => listing.state === "active"
 			);
 
+			var favorites = app.favoriteListings.getFavorites();
+
 			// Create listing objects from the raw json
 			listings = listings.map(json => {
 				var listing = Listing.fromJSON(json);
-				var listingIsFavorite = app.favoriteListings
-					.getFavorites()
-					.some(favorite => favorite.listing_id === listing.listing_id);
+				var listingIsFavorite = favorites.some(
+					fave => fave.listing_id === listing.listing_id
+				);
 
 				if (listingIsFavorite) {
 					listing.setIsFavorite(true);
@@ -53,10 +55,20 @@ app.get("/", function(req, res, next) {
 				return listing;
 			});
 
+			// Get the top four recommendations for the current page based on the user's favorites
+			var recommended = RecommendedListings.getRecommendations(
+				listings,
+				favorites
+			);
+
+			// Separate the rest of the listings from the recommended ones
+			listings = listings.filter(listing => !recommended.includes(listing));
+
 			// render the trending listings page with pagination
 			res.render("index", {
 				is_trending_listings_page: true,
 				listings: listings,
+				recommended_listings: recommended,
 				pages: Math.ceil(results.count / results.params.limit),
 				current_page: page,
 			});
