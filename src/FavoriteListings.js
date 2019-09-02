@@ -21,20 +21,28 @@ FavoriteListings.prototype.addListing = function(listing) {
 };
 
 FavoriteListings.prototype.removeListing = function(listing) {
-	var found = false;
-	var i = 0;
+	var foundIndex = this.listings.findIndex(
+		fave => fave.listing_id === listing.listing_id
+	);
 
-	while (!found && i < this.listings.length) {
-		if (this.listings[i].listing_id === listing.listing_id) {
-			found = true;
-			this.listings.splice(i, 1);
-		}
-		i++;
-	}
+	if (foundIndex > -1) this.listings.splice(foundIndex, 1);
+
+	// you could also do:
+	/* 
+    this.listings = this.listings.filter(
+     	fave => fave.listing_id !== listing.listing_id
+     );
+  */
+	// but it is less efficient because it will keep checking the array after
+	// the element is found
 };
 
 FavoriteListings.prototype.getFavorites = function() {
 	return this.listings;
+};
+
+FavoriteListings.prototype.getSortedFavorites = function() {
+	return this.listings.sort((a, b) => b.num_favorers - a.num_favorers);
 };
 
 module.exports = FavoriteListings;
