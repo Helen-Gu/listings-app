@@ -1,18 +1,21 @@
-var EtsyAPI = require("./EtsyAPI");
-
 function RecommendedListings() {}
 
 RecommendedListings.getRecommendations = function(allListings, favorites) {
+	// If the user hasn't favorited anything, the algorithm can't rank listings
 	if (!favorites.length) return [];
 
+	// Don't recommend listings the user has already favorited
 	var notAlreadyFavorite = allListings.filter(listing => !listing.is_favorite);
 
+	// Create an object that stores traits of the user's favorite listings
+	// and how often those traits appeaer
 	var favoriteTraits = favorites.reduce(RecommendedListings.traitReducer, {
 		tags: [],
 		categories: [],
 		taxonomies: [],
 	});
 
+	// Get the top four listings using the ranker and the user's preferences
 	var topFour = RecommendedListings.rankListings(
 		notAlreadyFavorite,
 		favoriteTraits
@@ -22,6 +25,7 @@ RecommendedListings.getRecommendations = function(allListings, favorites) {
 };
 
 RecommendedListings.traitReducer = function(acc, fave) {
+	// Tick up the category in the accumulator
 	var foundCategory = acc.categories.find(cat => cat.id === fave.category_id);
 	if (!foundCategory) {
 		acc.categories.push({ id: fave.category_id, count: 1 });
@@ -29,6 +33,7 @@ RecommendedListings.traitReducer = function(acc, fave) {
 		foundCategory.count += 1;
 	}
 
+	// Tick up the taxonomy in the accumulator
 	var foundTaxonomy = acc.taxonomies.find(
 		taxonomy => taxonomy.taxonomy === fave.taxonomy
 	);
@@ -38,6 +43,7 @@ RecommendedListings.traitReducer = function(acc, fave) {
 		foundTaxonomy.count += 1;
 	}
 
+	// Tick up each tag in the accumulator
 	fave.tags.forEach(tag => {
 		var foundTag = acc.tags.find(accTag => accTag.tag === tag);
 		if (!foundTag) {
@@ -50,6 +56,8 @@ RecommendedListings.traitReducer = function(acc, fave) {
 };
 
 RecommendedListings.rankListings = function(allListings, favoriteTraits) {
+	// Sort each trait by the number of times it appeared in the user's favorites
+	// then select the top 5
 	var topCategories = favoriteTraits.categories
 		.sort((a, b) => b.count - a.count)
 		.slice(0, 5);
@@ -60,33 +68,33 @@ RecommendedListings.rankListings = function(allListings, favoriteTraits) {
 		.sort((a, b) => b.count - a.count)
 		.slice(0, 5);
 
+	var topTraits = {
+		topCategories: topCategories,
+		topTags: topTags,
+		topTaxonomies: topTaxonomies,
+	};
+	// Now give the listings a relevance score based on the top traits
 	return allListings.sort((a, b) => {
-		var catCountA =
-			(topCategories.find(cat => cat.id === a.category_id) || {}).count || 0;
-		var catCountB =
-			(topCategories.find(cat => cat.id === b.category_id) || {}).count || 0;
-		var taxCountA =
-			(topTaxonomies.find(tax => tax.taxonomy === a.taxonomy) || {}).count || 0;
-		var taxCountB =
-			(topTaxonomies.find(tax => tax.taxonomy === b.taxonomy) || {}).count || 0;
-
-		var tagCountA = (topTags.filter(tag => a.tags.includes(tag)) || []).reduce(
-			(acc, tag) => acc + tag.count,
-			0
-		);
-
-		var tagCountB = (topTags.filter(tag => b.tags.includes(tag)) || []).reduce(
-			(acc, tag) => acc + tag.count,
-			0
-		);
-
-		var bRelevance = catCountB + taxCountB + tagCountB;
-		var aRelevance = catCountA + taxCountA + tagCountA;
-
-		a.relevance = aRelevance;
-		b.relevance = bRelevance;
+		var aRelevance = RecommendedListings.scoreListing(a, topTraits);
+		var bRelevance = RecommendedListings.scoreListing(b, topTraits);
 		return bRelevance - aRelevance;
 	});
+};
+
+RecommendedListings.scoreListing = function(listing, traits) {
+	var catCount =
+		(traits.topCategories.find(cat => cat.id === listing.category_id) || {})
+			.count || 0;
+
+	var taxCount =
+		(traits.topTaxonomies.find(tax => tax.taxonomy === listing.taxonomy) || {})
+			.count || 0;
+
+	var tagCount = (
+		traits.topTags.filter(tag => listing.tags.includes(tag)) || []
+	).reduce((acc, tag) => acc + tag.count, 0);
+
+	return catCount + taxCount + tagCount;
 };
 
 module.exports = RecommendedListings;
