@@ -1,3 +1,5 @@
+var EtsyAPI = require("./EtsyAPI");
+
 function RecommendedListings() {}
 
 RecommendedListings.getRecommendations = function(allListings, favorites) {

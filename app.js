@@ -31,20 +31,22 @@ app.get("/", function(req, res, next) {
 
 	EtsyAPI.getInstance()
 		.getTrendingListings(page)
-		.then(function(response1) {
+		.then(function(response) {
 			// if the request succedes parse the response
-			var results1 = JSON.parse(response1);
+			var results = JSON.parse(response);
 			// filter to only active listings as inactive have no images and cannot be displayed
-			var listings1 = results1.results.filter(
+			var listings = results.results.filter(
 				listing => listing.state === "active"
 			);
 
+			var favorites = app.favoriteListings.getFavorites();
+
 			// Create listing objects from the raw json
-			listings1 = listings1.map(json => {
+			listings = listings.map(json => {
 				var listing = Listing.fromJSON(json);
-				var listingIsFavorite = app.favoriteListings
-					.getFavorites()
-					.some(favorite => favorite.listing_id === listing.listing_id);
+				var listingIsFavorite = favorites.some(
+					fave => fave.listing_id === listing.listing_id
+				);
 
 				if (listingIsFavorite) {
 					listing.setIsFavorite(true);
@@ -53,50 +55,20 @@ app.get("/", function(req, res, next) {
 				return listing;
 			});
 
-			EtsyAPI.getInstance()
-				.getTrendingListings(page + 1)
-				.then(function(response2) {
-					// if the request succedes parse the response
-					var results2 = JSON.parse(response2);
-					// filter to only active listings as inactive have no images and cannot be displayed
-					var listings2 = results2.results.filter(
-						listing => listing.state === "active"
-					);
+			var recommended = RecommendedListings.getRecommendations(
+				listings,
+				favorites
+			);
 
-					// Create listing objects from the raw json
-					listings2 = listings2.map(json => {
-						var listing = Listing.fromJSON(json);
-						var listingIsFavorite = app.favoriteListings
-							.getFavorites()
-							.some(favorite => favorite.listing_id === listing.listing_id);
-
-						if (listingIsFavorite) {
-							listing.setIsFavorite(true);
-						}
-
-						return listing;
-					});
-
-					var favorites = app.favoriteListings.getFavorites();
-					var recommended = RecommendedListings.getRecommendations(
-						listings2,
-						favorites
-					);
-
-					// render the trending listings page with pagination
-					res.render("index", {
-						is_trending_listings_page: true,
-						listings: listings1,
-						recommended_listings: recommended,
-						pages: Math.ceil(results1.count / results1.params.limit),
-						current_page: page,
-					});
-				})
-				.catch(function(err) {
-					// render an error page if the request fails
-					console.log(err);
-					res.render({ status: "error", error: err });
-				});
+			listings = listings.filter(listing => !recommended.includes(listing));
+			// render the trending listings page with pagination
+			res.render("index", {
+				is_trending_listings_page: true,
+				listings: listings,
+				recommended_listings: recommended,
+				pages: Math.ceil(results.count / results.params.limit),
+				current_page: page,
+			});
 		})
 		.catch(function(err) {
 			// render an error page if the request fails
