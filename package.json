@@ -28,12 +28,5 @@
 	},
 	"devDependencies": {
 		"nodemon": "^1.19.1"
-	},
-	"nodemonConfig": {
-		"ignore": [
-			".*",
-			"test/*"
-		],
-		"delay": "2500"
 	}
 }

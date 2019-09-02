@@ -33,7 +33,8 @@ function Listing(
 	currency,
 	num_favorers,
 	tags,
-	category_id
+	category_id,
+	taxonomy
 ) {
 	this.listing_id = listing_id;
 	this.title = title;
@@ -45,6 +46,7 @@ function Listing(
 	this.is_favorite = false;
 	this.tags = tags;
 	this.category_id = category_id;
+	this.taxonomy = taxonomy;
 }
 
 Listing.fromJSON = function(json) {
@@ -57,7 +59,8 @@ Listing.fromJSON = function(json) {
 		json.currency_code,
 		json.num_favorers,
 		json.tags,
-		json.category_id
+		json.category_id,
+		json.taxonomy_path[0]
 	);
 };
 

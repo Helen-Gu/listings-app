@@ -5,6 +5,7 @@ var bodyParser = require("body-parser");
 var EtsyAPI = require("./src/EtsyAPI");
 var Listing = require("./src/Listing");
 var FavoriteListings = require("./src/FavoriteListings");
+var RecommendedListings = require("./src/RecommendedListings");
 
 var app = express();
 
@@ -30,16 +31,16 @@ app.get("/", function(req, res, next) {
 
 	EtsyAPI.getInstance()
 		.getTrendingListings(page)
-		.then(function(response) {
+		.then(function(response1) {
 			// if the request succedes parse the response
-			var results = JSON.parse(response);
+			var results1 = JSON.parse(response1);
 			// filter to only active listings as inactive have no images and cannot be displayed
-			var listings = results.results.filter(
+			var listings1 = results1.results.filter(
 				listing => listing.state === "active"
 			);
 
 			// Create listing objects from the raw json
-			listings = listings.map(json => {
+			listings1 = listings1.map(json => {
 				var listing = Listing.fromJSON(json);
 				var listingIsFavorite = app.favoriteListings
 					.getFavorites()
@@ -52,15 +53,50 @@ app.get("/", function(req, res, next) {
 				return listing;
 			});
 
-			console.dir(listings[0]);
+			EtsyAPI.getInstance()
+				.getTrendingListings(page + 1)
+				.then(function(response2) {
+					// if the request succedes parse the response
+					var results2 = JSON.parse(response2);
+					// filter to only active listings as inactive have no images and cannot be displayed
+					var listings2 = results2.results.filter(
+						listing => listing.state === "active"
+					);
 
-			// render the trending listings page with pagination
-			res.render("index", {
-				is_trending_listings_page: true,
-				listings: listings,
-				pages: Math.ceil(results.count / results.params.limit),
-				current_page: page,
-			});
+					// Create listing objects from the raw json
+					listings2 = listings2.map(json => {
+						var listing = Listing.fromJSON(json);
+						var listingIsFavorite = app.favoriteListings
+							.getFavorites()
+							.some(favorite => favorite.listing_id === listing.listing_id);
+
+						if (listingIsFavorite) {
+							listing.setIsFavorite(true);
+						}
+
+						return listing;
+					});
+
+					var favorites = app.favoriteListings.getFavorites();
+					var recommended = RecommendedListings.getRecommendations(
+						listings2,
+						favorites
+					);
+
+					// render the trending listings page with pagination
+					res.render("index", {
+						is_trending_listings_page: true,
+						listings: listings1,
+						recommended_listings: recommended,
+						pages: Math.ceil(results1.count / results1.params.limit),
+						current_page: page,
+					});
+				})
+				.catch(function(err) {
+					// render an error page if the request fails
+					console.log(err);
+					res.render({ status: "error", error: err });
+				});
 		})
 		.catch(function(err) {
 			// render an error page if the request fails
@@ -79,22 +115,6 @@ app.get("/favorites", function(req, res, next) {
 
 	res.render("favorites", {
 		is_favorite_listings_page: true,
-		listings: listings,
-	});
-});
-
-/* GET the recommended listings page. */
-app.get("/recommended", function(req, res, next) {
-	var listings = app.favoriteListings
-		.getFavorites()
-		.sort((a, b) => b.num_favorers - a.num_favorers);
-
-	for (var i = 0; i < listings.length; i++) {
-		listings[0].setIsFavorite(true);
-	}
-
-	res.render("recommended", {
-		is_recommended_listings_page: true,
 		listings: listings,
 	});
 });
