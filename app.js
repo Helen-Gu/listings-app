@@ -55,20 +55,21 @@ app.get("/", function(req, res, next) {
 				return listing;
 			});
 
-			// Get the top four recommendations for the current page based on the user's favorites
-			var recommended = RecommendedListings.getRecommendations(
+		
+			// Sort the recommendations for the current page based on the user's favorites
+			var sorted = RecommendedListings.getRecommendations(
 				listings,
 				favorites
 			);
-
+			
 			// Separate the rest of the listings from the recommended ones
-			listings = listings.filter(listing => !recommended.includes(listing));
+			var recommended = favorites.length ? sorted.splice(0, 4) : [];
 
 			// render the trending listings page with pagination
 			res.render("index", {
 				is_trending_listings_page: true,
-				listings: listings,
-				recommended_listings: recommended,
+				listings: sorted,
+				recommended_listings: recommended || [],
 				pages: Math.ceil(results.count / results.params.limit),
 				current_page: page,
 			});

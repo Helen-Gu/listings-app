@@ -2,7 +2,7 @@ function RecommendedListings() {}
 
 RecommendedListings.getRecommendations = function(allListings, favorites) {
 	// If the user hasn't favorited anything, the algorithm can't rank listings
-	if (!favorites.length) return [];
+	if (!favorites.length) return allListings;
 
 	// Don't recommend listings the user has already favorited
 	var notAlreadyFavorite = allListings.filter(listing => !listing.is_favorite);
@@ -15,13 +15,11 @@ RecommendedListings.getRecommendations = function(allListings, favorites) {
 		taxonomies: [],
 	});
 
-	// Get the top four listings using the ranker and the user's preferences
-	var topFour = RecommendedListings.rankListings(
+	// Order the listings using the ranker and the user's preferences
+	return RecommendedListings.rankListings(
 		notAlreadyFavorite,
 		favoriteTraits
-	).slice(0, 4);
-
-	return topFour;
+	);
 };
 
 RecommendedListings.traitReducer = function(acc, fave) {
