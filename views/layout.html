@@ -7,31 +7,31 @@
     <link rel="stylesheet" href="/css/style.css">
     <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha256-cCueBR6CsyA4/9szpPfrX3s49M9vUU5BgtiJj06wt/s=" crossorigin="anonymous"></script>
 </head>
- 
+
 <body>
- 
+
 <header>
   <nav id="nav" class="level">
-    <div class="level-item">
-      <a class="subtitle <%= (typeof is_trending_listings_page !== 'undefined') ? 'has-text-dark' : 'has-text-link' %>" href="/">
-        Trending Listings
-      </a>
-    </div>
-    <div class="level-item">
-      <a href="/">
-        <img src="/images/etsy_logo_sm_rgb.png" alt="Etsy"/>
-      </a>
-    </div>
-    <div class="level-item">
-      <a class="subtitle <%= (typeof is_favorite_listings_page !== 'undefined') ? 'has-text-dark' : 'has-text-link' %>"  href="/favorites">
-        My Favorites
-      </a>
-    </div>
+      <div class="level-item">
+        <a class="subtitle <%= (typeof is_trending_listings_page !== 'undefined') ? 'has-text-dark' : 'has-text-link' %>" href="/">
+          Trending Listings
+        </a>
+      </div>
+      <div class="level-item">
+        <a href="/">
+          <img src="/images/etsy_logo_sm_rgb.png" alt="Etsy"/>
+        </a>
+      </div>
+      <div class="level-item">
+        <a class="subtitle <%= (typeof is_favorite_listings_page !== 'undefined') ? 'has-text-dark' : 'has-text-link' %>"  href="/favorites">
+          My Favorites
+        </a>
+      </div>
   </nav>
 </header>
 
 <div class="container">
- 
+
     <section class="section">
         <%- body %>
     </section>
@@ -39,10 +39,10 @@
     <section class="section">
       <a href="https://codeascraft.com/">#C0DEA5CF</a>
     </section>
- 
+
 </div>
 
 <script src="/js/base.js"></script>
- 
+
 </body>
 </html>

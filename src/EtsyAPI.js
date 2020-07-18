@@ -1,41 +1,29 @@
-var request = require("request-promise-native");
+var request = require('request-promise-native');
 
 var instance;
 
-function EtsyAPI() {}
+function EtsyAPI() {
+
+}
 
 EtsyAPI.getInstance = function() {
-	if (!instance) {
-		instance = new EtsyAPI();
-	}
-	return instance;
-};
+  if (!instance) {
+    instance = new EtsyAPI();
+  }
+  return instance;
+}
 
 // For mocking http requests
 EtsyAPI.setInstance = function(etsyAPI) {
-	instance = etsyAPI;
-};
+  instance = etsyAPI
+}
 
 EtsyAPI.prototype.getTrendingListings = function(page) {
-	return request(
-		"https://www.etsy.com/api/v2/ajax/listings/trending?includes=Images,Shop&page=" +
-			page
-	);
-};
-
-EtsyAPI.prototype.getMultiplePages = function(pages) {
-	return request(
-		"https://www.etsy.com/api/v2/ajax/listings/trending?includes=Images,Shop&page=" +
-			page
-	);
+  return request("https://www.etsy.com/api/v2/ajax/listings/trending?includes=Images,Shop&page=" + page);
 };
 
 EtsyAPI.prototype.getListing = function(listing_id) {
-	return request(
-		"https://www.etsy.com/api/v2/ajax/listings/" +
-			listing_id +
-			"?includes=Images,Shop"
-	);
-};
+  return request("https://www.etsy.com/api/v2/ajax/listings/" + listing_id + "?includes=Images,Shop");
+}
 
 module.exports = EtsyAPI;

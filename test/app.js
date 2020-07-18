@@ -69,7 +69,7 @@ describe('app', function() {
       // Check that the listing card has a title
       expect($('.listing-card .shop-name').first().text().trim())
         .to.equal("JeannieDickson");
-      
+
       // Check that the listing card has a title
       expect($('.listing-card .listing-favorite-icon').first().data('listing-id'))
         .to.equal(484595996);
@@ -138,7 +138,7 @@ describe('app', function() {
 
       // Check that the request succeeded 
       expect(res.status).to.equal(200);
-    
+
       // parse the response into a jquery-like wrapper
       var $ = cheerio.load(res.text);
 
@@ -220,4 +220,4 @@ describe('app', function() {
     });
   });
 
-});
+}); 

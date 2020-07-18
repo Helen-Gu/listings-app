@@ -1,25 +1,11 @@
 <% layout('layout') -%>
 
-<h1 class="recommendations-header">Recommended for You</h1>
-
 <div class="columns is-multiline is-mobile">
-	<% if (recommended_listings.length == 0) { %>
-	<div>Start favoriting listings to get custom recommendations.</div>
-	<% } %> <% recommended_listings.forEach(function(listing) { %>
-	<div class="column is-one-quarter">
-		<%- partial('listing_card', {listing: listing}) %>
-	</div>
-	<% }) %>
-</div>
-
-<h1 class="recommendations-header">More Trending</h1>
-
-<div class="columns is-multiline is-mobile">
-	<% listings.forEach(function(listing) { %>
-	<div class="column is-one-quarter">
-		<%- partial('listing_card', {listing: listing}) %>
-	</div>
-	<% }) %>
+  <% listings.forEach(function(listing) { %>
+  	<div class="column is-one-quarter">
+  		<%- partial('listing_card', {listing: listing}) %>
+  	</div>
+  <% }) %>
 </div>
 
 <%- partial('pagination', {pages: pages, current_page: current_page}) %>
