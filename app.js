@@ -13,7 +13,7 @@ app.set('view engine', 'html');
 app.engine('html', engine);
 
 // serve static assets from the public directory
-app.use(express.static(__dirname + '/public/'))
+app.use(express.static(__dirname + '/public/'));
 
 // for parsing application/json
 app.use(bodyParser.json());
@@ -25,88 +25,103 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.favoriteListings = new FavoriteListings();
 
 /* GET the trending listings page. */
-app.get('/', function(req, res, next) {
-  var page = req.query.page ? req.query.page : 1;
+app.get('/', function (req, res, next) {
+	var page = req.query.page ? req.query.page : 1;
 
-  EtsyAPI
-    .getInstance()
-    .getTrendingListings(page)
-    .then(function(response) {
-      // if the request succedes parse the response
-      var results = JSON.parse(response);
+	EtsyAPI.getInstance()
+		.getTrendingListings(page)
+		.then(function (response) {
+			// if the request succedes parse the response
+			var results = JSON.parse(response);
 
-      // filter to only active listings as inactive have no images and cannot be displayed
-      var listings = results.results.filter(listing => listing.state === "active");
+			// filter to only active listings as inactive have no images and cannot be displayed
+			var listings = results.results.filter(
+				(listing) => listing.state === 'active'
+			);
+			const favorites = app.favoriteListings.getFavorites();
 
-      // Create listing objects from the raw json
-      listings = listings.map(Listing.fromJSON);
+			// Create listing objects from the raw json
+			listings = listings.map(Listing.fromJSON);
 
-      // render the trending listings page with pagination
-      res.render('index', {
-        is_trending_listings_page: true,
-        listings: listings,
-        pages: Math.ceil(results.count/results.params.limit),
-        current_page: page
-      });
-    })
-    .catch(function(err) {
-      // render an error page if the request fails
-      console.log(err);
-      res.render({status: "error", error: err});
-    });
+			listings = listings.map((listing) => {
+				const listingIsFavorite = favorites.some(
+					(fave) => fave.listing_id === listing.listing_id
+				);
+				if (listingIsFavorite) {
+					listing.setIsFavorite(true);
+				}
+				return listing;
+			});
 
+			// render the trending listings page with pagination
+			res.render('index', {
+				is_trending_listings_page: true,
+				listings: listings,
+				pages: Math.ceil(results.count / results.params.limit),
+				current_page: page,
+			});
+		})
+		.catch(function (err) {
+			// render an error page if the request fails
+			console.log(err);
+			res.render({ status: 'error', error: err });
+		});
 });
 
 /* GET the trending listings page. */
-app.get('/favorites', function(req, res, next) {
-  var listings = app.favoriteListings.getFavorites();
+app.get('/favorites', function (req, res, next) {
+	var listings = app.favoriteListings.getFavorites();
+	listings = listings.sort((a, b) => b.num_favorers - a.num_favorers);
+	for (var i = 0; i < listings.length; i++) {
+		listings[0].setIsFavorite(true);
+	}
 
-  for (var i = 0; i < listings.length; i++) {
-    listings[0].setIsFavorite(true);
-  }
-
-  res.render('favorites', {
-    is_favorite_listings_page: true,
-    listings: listings
-  });
+	res.render('favorites', {
+		is_favorite_listings_page: true,
+		listings: listings,
+	});
 });
 
 /* POST a new listing into favorites */
-app.post('/favorite-listing', function(req, res, next) {
-  var listing_id = req.body.listing_id
+app.post('/favorite-listing', function (req, res, next) {
+	var listing_id = req.body.listing_id;
 
-  EtsyAPI
-    .getInstance()
-    .getListing(listing_id)
-    .then(function(response) {
-      var results = JSON.parse(response);
-      var listing = Listing.fromJSON(results.results[0])
-      app.favoriteListings.addListing(listing)
-      res.json({status: "success"});
-    })
-    .catch(function(err) {
-      // render an error page if the request fails
-      console.log(err);
-      res.json({status: "error", error: err});
-    });
+	EtsyAPI.getInstance()
+		.getListing(listing_id)
+		.then(function (response) {
+			var results = JSON.parse(response);
+			var listing = Listing.fromJSON(results.results[0]);
+			listing.setIsFavorite(true);
+			app.favoriteListings.addListing(listing);
+			res.json({ status: 'success' });
+		})
+		.catch(function (err) {
+			// render an error page if the request fails
+			console.log(err);
+			res.json({ status: 'error', error: err });
+		});
 });
 
 /* DELETE a listing from favorites */
-app.delete('/favorite-listing', function(req, res, next) {
-  var listing_id = req.body.listing_id
+app.delete('/favorite-listing', function (req, res, next) {
+	var listing_id = req.body.listing_id;
 
-  EtsyAPI
-    .getInstance()
-    .getListing(listing_id)
-    .then(function(response) {
-      // TODO: remove the listing
-      res.json({status: "success"});
-    })
-    .catch(function(err) {
-      // render an error page if the request fails
-      console.log(err);
-      res.json({status: "error", error: err});
-    });
+	EtsyAPI.getInstance()
+		.getListing(listing_id)
+		.then(function (response) {
+			// TODO: remove the listing
+			var results = JSON.parse(response);
+			var listing = Listing.fromJSON(results.results[0]);
+
+			listing.setIsFavorite(false);
+			app.favoriteListings.removeListing(listing);
+			res.json({ status: 'success' });
+		})
+		.catch(function (err) {
+			// render an error page if the request fails
+			console.log(err);
+			res.json({ status: 'error', error: err });
+		});
 });
 
 module.exports = app;
